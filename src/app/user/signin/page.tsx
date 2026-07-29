@@ -24,6 +24,7 @@ const Signin = () => {
                 alert("user signed successfully")
                 console.log(response);
                 router.push("/user/dashboard")
+                alert('pushed to dashboard')
 
             }
 
