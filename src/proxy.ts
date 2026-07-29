@@ -5,7 +5,10 @@ import type { NextRequest } from 'next/server'
 // This function can be marked `async` if using `await` inside
 export async function proxy(request: NextRequest) {
 
-    const token = request.cookies.get('token');
+    const token = request.cookies.get('accessToken');
+    if(!token){
+        console.log('we dont get the token in proxy.ts')
+    }
     const currentPathName = request.nextUrl.pathname;
     if (token) {
         if (currentPathName == '/user/signin' || currentPathName == '/user/signin') {

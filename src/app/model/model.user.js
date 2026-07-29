@@ -35,7 +35,8 @@ const UserSchema = new mongoose.Schema({
     },
     // Agar ek user multiple messages rakhega toh array use karein []
     // Agar sirf ek message rakhna hai toh array brackets hata dein
-    messages: [messageSchema]
+    messages: [messageSchema],
+    refreshToken:String
 
 }, { timestamps: true }); // createdAt aur updatedAt automatically add ho jayenge
 

@@ -3,7 +3,7 @@ import User from '@/app/model/model.user'
 import dbConnect from "@/app/model/connection";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
-import { cookies } from "next/headers";
+import { generateAccessToken, generateRefreshToken } from "../../../../lib/auth";
 
 
 
@@ -41,25 +41,35 @@ export async function POST(req: NextRequest) {
         }
         const tokenData = {
             id: data._id,
-            gmail: data.gmail
+            gmail: data.gmail,
+
         }
         //generate access token
-        const secretKey = new TextEncoder().encode(process.env.JWT_SECRET)
-        const refreshToken = await new SignJWT(tokenData).setProtectedHeader({ alg: 'HS256' })
-            .setIssuedAt()
-            .setExpirationTime('7d')
-            .sign(secretKey);
+
+        const accessToken:string= await generateAccessToken(tokenData);
+        const refreshToken:string= await generateRefreshToken(tokenData);
 
 
         const response = NextResponse.json(
-            { message: "User found successfully", user },
+            { message: "User signin successfull" },
             { status: 200 }
         );
 
         // set cookies
 
-        response.cookies.set("token", refreshToken, {
-            httpOnly: true
+        response.cookies.set("accessToken", accessToken, {
+            secure:process.env.NODE_ENV === 'production',
+            httpOnly: true,
+            path:'/',
+            sameSite:'strict',
+
+
+        })
+        response.cookies.set('refreshToken' ,refreshToken,{
+            httpOnly:true,
+            path:'api/verify',
+            sameSite:'strict',
+            secure:process.env.NODE_ENV === 'production',
         })
         // 4. Agar user mil gaya, toh success response bhejein
 return response
