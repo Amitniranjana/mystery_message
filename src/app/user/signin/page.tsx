@@ -13,7 +13,7 @@ const Signin = () => {
     }
     const [user, setUser] = useState(newUser);
     const [loading, setLoading] = useState(false);
-    const saveData = async (e) => {
+    const saveData = async (e:React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log(user);
         setUser(user);
