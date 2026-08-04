@@ -17,8 +17,8 @@ export async function POST(req: NextRequest) {
         // 3. Extract ONLY custom claims / user info (avoid passing 'exp' & 'iat')
         const payload = decodedToken.payload
         const userPayload = {
-            userId: payload.userId || payload.sub,
-            email: payload.email,
+            userId: payload.id || payload.sub,
+            email: payload.gmail,
             // Add other user fields needed in access token
         };
         const accessToken = await generateAccessToken(userPayload);

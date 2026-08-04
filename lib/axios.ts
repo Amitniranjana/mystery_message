@@ -50,7 +50,7 @@ api.interceptors.response.use(
 
       try {
         // Aapke backend ke refresh token route ko call kar rahe hain naya access token cookie me set karwane ke liye
-        await axios.post('/api/auth/refresh', {}, { withCredentials: true });
+        await axios.post('/api/verifytoken', {}, { withCredentials: true });
 
         processQueue(null); // Queue me jitni requests fassi thin, unhe signal do ki token mil gaya hai
 
