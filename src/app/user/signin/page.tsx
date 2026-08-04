@@ -1,9 +1,10 @@
 
 "use client"
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+
 
 const Signin = () => {
     const router = useRouter();
@@ -13,6 +14,7 @@ const Signin = () => {
     }
     const [user, setUser] = useState(newUser);
     const [loading, setLoading] = useState(false);
+
     const saveData = async (e:React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log(user);
@@ -24,7 +26,7 @@ const Signin = () => {
                 alert("user signed successfully")
                 console.log(response);
                 router.push("/user/dashboard")
-                alert('pushed to dashboard')
+
 
             }
 
@@ -44,6 +46,7 @@ const Signin = () => {
 
 
     }
+
     return (
         <form onSubmit={saveData}>
             <div className='flex flex-col justify-center items-center h-screen bg-gradient-to-r from-blue-700 to-red-500'>

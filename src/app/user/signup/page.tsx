@@ -1,9 +1,9 @@
 'use client'
-import React, { useState } from 'react'
-import axios from 'axios' // <-- Axios import kiya
-import {useRouter} from 'next/navigation'
+import React, { useState, useEffect } from 'react'
+import axios, { AxiosError } from 'axios' // <-- Axios import kiya
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-
+import { useDebounce } from 'use-debounce';
 const Signup = () => {
     const userdata = {
         gmail: "",
@@ -12,10 +12,11 @@ const Signup = () => {
         gender: "",
         message: ""
     }
-
+    const [isDebounceSearch, setIsDebounceSearch] = useState(false);
+    const [isDebounceSearchMessage, setIsDebounceSearchMessage] = useState("");
     const [user, setUser] = useState(userdata);
     const [loading, setLoading] = useState(false); // Thoda better UX ke liye
-const router=useRouter();
+    const router = useRouter();
     const saveData = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -50,7 +51,33 @@ const router=useRouter();
         }
     }
 
+    const [debouncedUsername] = useDebounce(user.username, 900);
 
+    useEffect(() => {
+if(!debouncedUsername.trim()){
+    return;
+}
+const checkUsername = async()=>{
+
+            setIsDebounceSearch(true);
+
+            try {
+const debounceResponse=await axios.post('/api/search-username' , {username:debouncedUsername});
+setIsDebounceSearchMessage(debounceResponse.data.message)
+            } catch (error) {
+                if (axios.isAxiosError(error)) {
+                    console.log('problem in debouncing username', AxiosError)
+                } else {
+                    console.log('something went wrong', error)
+                }
+            }
+            finally{
+            setIsDebounceSearch(false)
+
+        }
+    }
+    checkUsername();
+    }, [debouncedUsername])
     return (
         <form onSubmit={saveData}>
             <div className='flex flex-col justify-center items-center h-screen bg-gradient-to-r from-blue-700 to-red-500'>
@@ -58,10 +85,12 @@ const router=useRouter();
 
                     <input placeholder='gmail' className='rounded-md my-1 px-2 py-1' value={user.gmail} onChange={(e) => setUser({ ...user, gmail: e.target.value })} type="email" required />
                     <input placeholder='username' className='rounded-md my-1 px-2 py-1' value={user.username} onChange={(e) => setUser({ ...user, username: e.target.value })} type="text" required />
+{isDebounceSearch ? <p className='text-red-600 font-semibold'> loading.... </p>: <p className='text-lime-50 font-semibold'>{isDebounceSearchMessage}</p> }
+
                     <input placeholder='password' className='rounded-md my-1 px-2 py-1' value={user.password} onChange={(e) => setUser({ ...user, password: e.target.value })} type="password" required />
                     <input placeholder='gender' className='rounded-md my-1 px-2 py-1' value={user.gender} onChange={(e) => setUser({ ...user, gender: e.target.value })} type="text" />
                     <input placeholder='message' className='rounded-md my-1 px-2 py-1' value={user.message} onChange={(e) => setUser({ ...user, message: e.target.value })} type="text" />
-
+<div className='flex flex-col justify-center items-center'>
                     <button
                         type="submit"
                         disabled={loading} // Jab submit ho raha ho toh button disable kar dein
@@ -69,7 +98,10 @@ const router=useRouter();
                     >
                         {loading ? 'Submitting...' : 'signup'}
                     </button>
-                    <Link href={"/user/signin"}>Signin</Link>
+ <p className='text-sm'>Already have an account <Link className='text-blue-700 font-extrabold underline ' href={"/user/signin"}>Signin</Link></p>
+
+                    </div>
+
                 </div>
             </div>
         </form>

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import User from '@/app/model/model.user'
 import dbConnect from "@/app/model/connection";
 import bcrypt from "bcryptjs";
-import { SignJWT } from "jose";
+
 import { generateAccessToken, generateRefreshToken } from "../../../../lib/auth";
 
 
